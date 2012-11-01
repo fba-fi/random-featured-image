@@ -1,26 +1,26 @@
 <?php
 /*
-Plugin Name: SPLL Random Posts Featured Image from Category
+Plugin Name: Random Featured Image from Category
 Plugin URI: http://www.purjelautaliitto.fi/
 Description: A widget that lists random posts and featurd image from a chosen category.
 Version: 1.0
 Author: Mikko Vatanen
 Author URI: http://www.purjelautaliitto.fi/
-Text Domain: spll-random-posts-from-category
+Text Domain: random-featured-image-from-category
 License: GPL2
 */
 
-class SpllSpllRandomPostsFromCategory extends WP_Widget {
+class RandomFeaturedImageFromCategory extends WP_Widget {
 
-	function SpllRandomPostsFromCategory() {
-			$widget_ops = array('classname' => 'random_from_cat', 'description' => __( 'random posts from a chosen category', 'spll-random-posts-from-category') );
-			$this->WP_Widget('SpllRandomPostsFromCategory', __('Random Posts from Category', 'spll-random-posts-from-category'), $widget_ops);
+	function RandomFeaturedImageFromCategory() {
+			$widget_ops = array('classname' => 'random_from_cat', 'description' => __( 'random posts from a chosen category', 'random-featured-image-from-category') );
+			$this->WP_Widget('RandomFeaturedImageFromCategory', __('Random Posts from Category', 'random-featured-image-from-category'), $widget_ops);
 	}
 
 	function widget( $args, $instance ) {
 			extract( $args );
 
-			$title = apply_filters('widget_title', empty( $instance['title'] ) ? __( 'Random Posts' , 'spll-random-posts-from-category') : $instance['title']);
+			$title = apply_filters('widget_title', empty( $instance['title'] ) ? __( ' Random Posts' , 'random-featured-image-from-category') : $instance['title']);
 
 			echo $before_widget;
 			if ( $title ) {
@@ -32,10 +32,10 @@ class SpllSpllRandomPostsFromCategory extends WP_Widget {
 			}
 			?>
 			<ul>
-			<?php 
-			$random = new WP_Query("cat=".$instance['cat']."&showposts=".$instance['showposts']."&orderby=rand"); 
+			<?php
+			$random = new WP_Query("cat=".$instance['cat']."&showposts=".$instance['showposts']."&orderby=rand");
 			// the Loop
-			if ($random->have_posts()) : 
+			if ($random->have_posts()) :
 			while ($random->have_posts()) : $random->the_post(); ?>
                 <li>
 				<?php
@@ -44,7 +44,7 @@ class SpllSpllRandomPostsFromCategory extends WP_Widget {
 				<?php
 				}
 				if ($instance['content'] == 'excerpt' || $instance['content'] == 'excerpt-notitle') {
-					if (function_exists('the_excerpt_reloaded')) 
+					if (function_exists('the_excerpt_reloaded'))
 						the_excerpt_reloaded($instance['words'], $instance['tags'], 'content', FALSE, '', '', '1', '');
 					else the_excerpt();  // this covers Advanced Excerpt as well as the built-in one
 				}
@@ -71,61 +71,62 @@ class SpllSpllRandomPostsFromCategory extends WP_Widget {
 	function form( $instance ) {
 			//Defaults
 				$instance = wp_parse_args( (array) $instance, array(
-						'title' => __('Recent Posts', 'spll-random-posts-from-category'),
+						'title' => __(' Recent Posts', 'random-featured-image-from-category'),
 						'cat' => 1,
 						'showposts' => 1,
 						'content' => 'title',
 						'postlink' => 0,
 						'words' => '99999',
-						'tags' => '<p><div><span><br><img><a><ul><ol><li><blockquote><cite><em><i><strong><b><h2><h3><h4><h5><h6>'));	
+						'tags' => '<p><div><span><br><img><a><ul><ol><li><blockquote><cite><em><i><strong><b><h2><h3><h4><h5><h6>'));
 	?>
 
 <p>
-<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'spll-random-posts-from-category'); ?></label> 
-<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" 
+<label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'random-featured-image-from-category'); ?></label>
+<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>"
 	name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $instance['title']; ?>" />
 </p>
 
-<p><label for="<?php echo $this->get_field_id('cat'); ?>"><?php _e('Show posts from category:', 'spll-random-posts-from-category'); ?></label> 
+<p><label for="<?php echo $this->get_field_id('cat'); ?>"><?php _e('Show posts from category:', 'random-featured-image-from-category'); ?></label>
 <?php wp_dropdown_categories(array('name' => $this->get_field_name('cat'), 'hide_empty'=>0, 'hierarchical'=>1, 'selected'=>$instance['cat'])); ?></label>
 </p>
 
 <p>
-<input id="<?php echo $this->get_field_id('postlink'); ?>" name="<?php echo $this->get_field_name('postlink'); ?>" 
+<input id="<?php echo $this->get_field_id('postlink'); ?>" name="<?php echo $this->get_field_name('postlink'); ?>"
 	type="checkbox" <?php if ($instance['postlink']) { ?> checked="checked" <?php } ?> value="1" />
-<label for="<?php echo $this->get_field_id('postlink'); ?>"><?php _e('Link widget title to category archive', 'spll-random-posts-from-category'); ?></label>
+<label for="<?php echo $this->get_field_id('postlink'); ?>"><?php _e('Link widget title to category archive', 'random-featured-image-from-category'); ?></label>
 </p>
 
-<p><label for="<?php echo $this->get_field_id('showposts'); ?>"><?php _e('Number of posts to show:', 'spll-random-posts-from-category'); ?></label> 
-<input class="widefat" id="<?php echo $this->get_field_id('showposts'); ?>" name="<?php echo $this->get_field_name('showposts'); ?>" 
+<p><label for="<?php echo $this->get_field_id('showposts'); ?>"><?php _e('Number of posts to show:', 'random-featured-image-from-category'); ?></label>
+<input class="widefat" id="<?php echo $this->get_field_id('showposts'); ?>" name="<?php echo $this->get_field_name('showposts'); ?>"
 	type="text" value="<?php echo $instance['showposts']; ?>" />
 </p>
 
 <p>
-<label for="<?php echo $this->get_field_id('content'); ?>"><?php _e('Display:', 'spll-random-posts-from-category'); ?></label> 
+<label for="<?php echo $this->get_field_id('content'); ?>"><?php _e('Display:', 'random-featured-image-from-category'); ?></label>
 <select id="<?php echo $this->get_field_id('content'); ?>" name="<?php echo $this->get_field_name('content'); ?>" class="postform">
-	<option value="title"<?php selected( $instance['content'], 'title' ); ?>><?php _e('Title Only', 'spll-random-posts-from-category'); ?></option>
-	<option value="excerpt"<?php selected( $instance['content'], 'excerpt' ); ?>><?php _e('Title and Excerpt', 'spll-random-posts-from-category'); ?></option>
-	<option value="excerpt-notitle"<?php selected( $instance['content'], 'excerpt-notitle' ); ?>><?php _e('Excerpt without Title', 'spll-random-posts-from-category'); ?></option>
-	<option value="content"<?php selected( $instance['content'], 'content' ); ?>><?php _e('Title and Content', 'spll-random-posts-from-category'); ?></option>
-	<option value="content-notitle"<?php selected( $instance['content'], 'content-notitle' ); ?>><?php _e('Content without Title', 'spll-random-posts-from-category'); ?></option>
+	<option value="title"<?php selected( $instance['content'], 'title' ); ?>><?php _e('Title Only', 'random-featured-image-from-category'); ?></option>
+	<option value="title-image"<?php selected( $instance['content'], 'title-image' ); ?>><?php _e('Title and Image', 'random-featured-image-from-category'); ?></option>
+	<option value="excerpt"<?php selected( $instance['content'], 'excerpt' ); ?>><?php _e('Title and Excerpt', 'random-featured-image-from-category'); ?></option>
+	<option value="excerpt-notitle"<?php selected( $instance['content'], 'excerpt-notitle' ); ?>><?php _e('Excerpt without Title', 'random-featured-image-from-category'); ?></option>
+	<option value="content"<?php selected( $instance['content'], 'content' ); ?>><?php _e('Title and Content', 'random-featured-image-from-category'); ?></option>
+	<option value="content-notitle"<?php selected( $instance['content'], 'content-notitle' ); ?>><?php _e('Content without Title', 'random-featured-image-from-category'); ?></option>
 </select>
 </p>
 
 <?php
 if (function_exists('the_excerpt_reloaded')) { ?>
 <p>
-<label for="<?php echo $this->get_field_id('words'); ?>"><?php _e('Limit excerpts to how many words?:', 'spll-random-posts-from-category'); ?></label>
-<input class="widefat" id="<?php echo $this->get_field_id('words'); ?>" name="<?php echo $this->get_field_name('words'); ?>" 
+<label for="<?php echo $this->get_field_id('words'); ?>"><?php _e('Limit excerpts to how many words?:', 'random-featured-image-from-category'); ?></label>
+<input class="widefat" id="<?php echo $this->get_field_id('words'); ?>" name="<?php echo $this->get_field_name('words'); ?>"
 	type="text" value="<?php echo $instance['words']; ?>" />
 </p>
 
 <p>
-<label for="<?php echo $this->get_field_id('tags'); ?>"><?php _e('Allowed HTML tags in excerpts:', 'spll-random-posts-from-category'); ?></label>
-<input class="widefat" id="<?php echo $this->get_field_id('tags'); ?>" name="<?php echo $this->get_field_name('tags'); ?>" 
+<label for="<?php echo $this->get_field_id('tags'); ?>"><?php _e('Allowed HTML tags in excerpts:', 'random-featured-image-from-category'); ?></label>
+<input class="widefat" id="<?php echo $this->get_field_id('tags'); ?>" name="<?php echo $this->get_field_name('tags'); ?>"
 	type="text" value="<?php echo htmlspecialchars($instance['tags'], ENT_QUOTES); ?>" />
 <br />
-<small><?php _e('E.g.: ', 'spll-random-posts-from-category'); ?>&lt;p&gt;&lt;div&gt;&lt;span&gt;&lt;br&gt;&lt;img&gt;&lt;a&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;blockquote&gt;&lt;cite&gt;&lt;em&gt;&lt;i&gt;&lt;strong&gt;&lt;b&gt;&lt;h2&gt;&lt;h3&gt;&lt;h4&gt;&lt;h5&gt;&lt;h6&gt;
+<small><?php _e('E.g.: ', 'random-featured-image-from-category'); ?>&lt;p&gt;&lt;div&gt;&lt;span&gt;&lt;br&gt;&lt;img&gt;&lt;a&gt;&lt;ul&gt;&lt;ol&gt;&lt;li&gt;&lt;blockquote&gt;&lt;cite&gt;&lt;em&gt;&lt;i&gt;&lt;strong&gt;&lt;b&gt;&lt;h2&gt;&lt;h3&gt;&lt;h4&gt;&lt;h5&gt;&lt;h6&gt;
 </small>
 </p>
 <?php } // end if function_exists
@@ -134,12 +135,12 @@ if (function_exists('the_excerpt_reloaded')) { ?>
 } // widget class
 
 function random_from_cat_init() {
-	register_widget('SpllRandomPostsFromCategory');
+	register_widget('RandomFeaturedImageFromCategory');
 }
 
 add_action('widgets_init', 'random_from_cat_init');
 
 // i18n
 $plugin_dir = basename(dirname(__FILE__)). '/languages';
-load_plugin_textdomain( 'SpllRandomPostsFromCategory', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
+load_plugin_textdomain( 'RandomFeaturedImageFromCategory', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
 ?>

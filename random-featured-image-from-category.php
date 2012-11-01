@@ -2,7 +2,7 @@
 /*
 Plugin Name: Random Featured Image from Category
 Plugin URI: http://www.purjelautaliitto.fi/
-Description: A widget that lists random posts and featurd image from a chosen category.
+Description: A widget that lists random featured images from a chosen category.
 Version: 1.0
 Author: Mikko Vatanen
 Author URI: http://www.purjelautaliitto.fi/
@@ -13,14 +13,14 @@ License: GPL2
 class RandomFeaturedImageFromCategory extends WP_Widget {
 
 	function RandomFeaturedImageFromCategory() {
-			$widget_ops = array('classname' => 'random_from_cat', 'description' => __( 'random posts from a chosen category', 'random-featured-image-from-category') );
-			$this->WP_Widget('RandomFeaturedImageFromCategory', __('Random Posts from Category', 'random-featured-image-from-category'), $widget_ops);
+			$widget_ops = array('classname' => 'random_from_cat', 'description' => __( 'random featured images from a chosen category', 'random-featured-image-from-category') );
+			$this->WP_Widget('RandomFeaturedImageFromCategory', __('Random Featured Images', 'random-featured-image-from-category'), $widget_ops);
 	}
 
 	function widget( $args, $instance ) {
 			extract( $args );
 
-			$title = apply_filters('widget_title', empty( $instance['title'] ) ? __( ' Random Posts' , 'random-featured-image-from-category') : $instance['title']);
+			$title = apply_filters('widget_title', empty( $instance['title'] ) ? __( ' Random Featured Images' , 'random-featured-image-from-category') : $instance['title']);
 
 			echo $before_widget;
 			if ( $title ) {
@@ -33,23 +33,39 @@ class RandomFeaturedImageFromCategory extends WP_Widget {
 			?>
 			<ul>
 			<?php
-			$random = new WP_Query("cat=".$instance['cat']."&showposts=".$instance['showposts']."&orderby=rand");
-			// the Loop
-			if ($random->have_posts()) :
-			while ($random->have_posts()) : $random->the_post(); ?>
-                <li>
-				<?php
-					if ($instance['content'] != 'excerpt-notitle' && $instance['content'] != 'content-notitle') { ?>
-					<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-				<?php
-				}
-				if ($instance['content'] == 'excerpt' || $instance['content'] == 'excerpt-notitle') {
-					if (function_exists('the_excerpt_reloaded'))
-						the_excerpt_reloaded($instance['words'], $instance['tags'], 'content', FALSE, '', '', '1', '');
-					else the_excerpt();  // this covers Advanced Excerpt as well as the built-in one
-				}
-				if ($instance['content'] == 'content' || $instance['content'] == 'content-notitle') the_content();
-			endwhile; endif;
+            $random = new WP_Query("cat=".$instance['cat']."&showposts=".$instance['showposts']."&orderby=rand");
+            // the Loop
+            if ($random->have_posts()) :
+                while ($random->have_posts()) : $random->the_post(); ?>
+                    <li>
+                    <?php
+                        if ($instance['content'] != 'excerpt-notitle' && $instance['content'] != 'content-notitle') { ?>
+                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                    <?php
+                    }
+                    if ($instance['content'] == 'excerpt' || $instance['content'] == 'excerpt-notitle') {
+                        if (function_exists('the_excerpt_reloaded'))
+                            the_excerpt_reloaded($instance['words'], $instance['tags'], 'content', FALSE, '', '', '1', '');
+                        else the_excerpt();  // this covers Advanced Excerpt as well as the built-in one
+                    }
+                    if ($instance['content'] == 'content' || $instance['content'] == 'content-notitle') the_content();
+
+                    if ($instance['content'] == 'title-image') {
+
+                    if ( current_theme_supports( 'get-the-image' ) ) {
+
+                        get_the_image( array(
+                            'meta_key' => 'Thumbnail',
+                            'size' => 'archive-thumbnail',
+                            'image_class' => 'featured',
+                            'width' => 470,
+                            'height' => 140,
+                            'default_image' => get_template_directory_uri() . '/images/archive-thumbnail-placeholder.gif' ) );
+                        }
+
+                    }
+                endwhile;
+            endif;
 			?>
 			</ul>
 			<?php
@@ -134,11 +150,11 @@ if (function_exists('the_excerpt_reloaded')) { ?>
 	} // function form
 } // widget class
 
-function random_from_cat_init() {
+function random_feat_image_from_cat_init() {
 	register_widget('RandomFeaturedImageFromCategory');
 }
 
-add_action('widgets_init', 'random_from_cat_init');
+add_action('widgets_init', 'random_feat_image_from_cat_init');
 
 // i18n
 $plugin_dir = basename(dirname(__FILE__)). '/languages';

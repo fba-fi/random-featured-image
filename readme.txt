@@ -3,7 +3,7 @@ Contributors: Mikko Vatanen
 Tags: widget, random, posts
 Requires at least: 2.8
 Tested up to: 3.1
-Stable tag: 1.15
+Stable tag: 1.16
 
 A widget that lists random posts with featured image from a chosen category.
 

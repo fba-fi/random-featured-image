@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Random Featured Image from Category
+Plugin Name: Random Featured Image
 Plugin URI: http://www.purjelautaliitto.fi/
 Description: A widget that lists random featured images from a chosen category.
 Version: 1.1
@@ -13,7 +13,7 @@ License: GPL2
 class RandomFeaturedImage extends WP_Widget {
 
 	function RandomFeaturedImage() {
-			$widget_ops = array('classname' => 'random_featured_image_from_category', 'description' => __( 'random featured images from a chosen category', 'random-featured-image') );
+			$widget_ops = array('classname' => 'random_featured_image', 'description' => __( 'random featured images from a chosen category', 'random-featured-image') );
 			$this->WP_Widget('RandomFeaturedImage', __('Random Featured Images', 'random-featured-image'), $widget_ops);
 	}
 
@@ -28,7 +28,7 @@ class RandomFeaturedImage extends WP_Widget {
 	function widget( $args, $instance ) {
 			extract( $args );
 
-			$title = apply_filters('widget_title', empty( $instance['title'] ) ? __( ' Random Featured Images' , 'random-featured-image') : $instance['title']);
+			//$title = apply_filters('widget_title', empty( $instance['title'] ) ? __( ' Random Featured Images' , 'random-featured-image') : $instance['title']);
 
 			echo $before_widget;
 
@@ -40,20 +40,20 @@ class RandomFeaturedImage extends WP_Widget {
 				echo $before_title . $title . $after_title;
 			}
 
-            $this->div_begin('random_featured_image_from_category_cycle');
+            $this->div_begin('random_featured_image_cycle');
 
             $random = new WP_Query("cat=".$instance['cat']."&showposts=".$instance['showposts']."&orderby=rand");
 
             // the Loop
             if ($random->have_posts()) :
-                $firstclass=" random_featured_image_from_category_first";
+                $hiddenclass="";
                 while ($random->have_posts()) : $random->the_post();
 
-                    $this->div_begin("random_featured_image_from_category_container $firstclass");
-                    $firstclass = "";
+                    $this->div_begin("random_featured_image_container $hiddenclass");
+                    $hiddenclass = "hidden";
 
                     if ($instance['content'] != 'excerpt-notitle' && $instance['content'] != 'content-notitle') {
-                        $this->div_begin('random_featured_image_from_category_title');
+                        $this->div_begin('random_featured_image_title');
                         echo '<a href="' . get_permalink() . '">' . get_the_title() . '</a>';
                         $this->div_end();
                     }
@@ -72,7 +72,7 @@ class RandomFeaturedImage extends WP_Widget {
                         get_the_image( array(
                             'meta_key' => 'Thumbnail',
                             'size' => 'thumbnail',
-                            'image_class' => 'random_featured_image_from_category_image',
+                            'image_class' => 'random_featured_image_image',
                             'width' => 150,
                             'height' => 150,
                             'default_image' => get_template_directory_uri() . '/images/archive-thumbnail-placeholder.gif' ) );
@@ -173,17 +173,17 @@ function random_feat_image_from_cat_init() {
 	register_widget('RandomFeaturedImage');
 }
 
-function random_featured_image_from_category_enqueue_scripts() {
-    wp_deregister_script( 'random_featured_image_from_category_script' );
-    wp_register_script( 'random_featured_image_from_category_script', plugins_url('js/main.js', __FILE__));
-    wp_enqueue_script( 'random_featured_image_from_category_script' );
+function random_featured_image_enqueue_scripts() {
+    wp_deregister_script( 'random_featured_image_script' );
+    wp_register_script( 'random_featured_image_script', plugins_url('js/main.js', __FILE__));
+    wp_enqueue_script( 'random_featured_image_script' );
 
-    wp_register_style( 'random_featured_image_from_category_style', plugins_url('css/style.css', __FILE__));
-    wp_enqueue_style( 'random_featured_image_from_category_style' );
+    wp_register_style( 'random_featured_image_style', plugins_url('css/style.css', __FILE__));
+    wp_enqueue_style( 'random_featured_image_style' );
 }
 
 add_action('widgets_init', 'random_feat_image_from_cat_init');
-add_action('wp_enqueue_scripts', 'random_featured_image_from_category_enqueue_scripts');
+add_action('wp_enqueue_scripts', 'random_featured_image_enqueue_scripts');
 
 
 

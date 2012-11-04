@@ -52,11 +52,32 @@ class RandomFeaturedImage extends WP_Widget {
                     $this->div_begin("random_featured_image_container $hiddenclass");
                     $hiddenclass = "hidden";
 
+
+                    if ($instance['content'] == 'title-image') {
+
+                        if ( current_theme_supports('get-the-image') ) {
+                        get_the_image( array(
+                            'meta_key' => 'Sidebar Thumbnail',
+                            'size' => 'rf-sidebar-thumbnail',
+                            'image_class' => 'random_featured_image_image',
+                            'width' => 250,
+                            'height' => 500,
+                            ));
+                        }
+                    }
+
+                    $title_words = explode(' ', get_the_title());
+                    $last_word = array_pop($title_words);
+                    $title_words = implode(' ', $title_words);
+
                     if ($instance['content'] != 'excerpt-notitle' && $instance['content'] != 'content-notitle') {
                         $this->div_begin('random_featured_image_title');
-                        echo '<a href="' . get_permalink() . '">' . get_the_title() . '</a>';
+                        echo '<h1><a href="' . get_permalink() . '">' . $title_words . '</a></h1>';
+                        echo '<h2><a href="' . get_permalink() . '">' . $last_word. '</a></h2>';
                         $this->div_end();
                     }
+
+                    echo apply_atomic_shortcode( 'byline', '<div class="byline-cat">' . __( '[entry-terms taxonomy="category" before=""]', hybrid_get_parent_textdomain() ) . '</div>' );
 
                     if ($instance['content'] == 'excerpt' || $instance['content'] == 'excerpt-notitle') {
                         if (function_exists('the_excerpt_reloaded'))
@@ -65,21 +86,6 @@ class RandomFeaturedImage extends WP_Widget {
                     }
 
                     if ($instance['content'] == 'content' || $instance['content'] == 'content-notitle') the_content();
-
-                    if ($instance['content'] == 'title-image') {
-
-                    if ( current_theme_supports('get-the-image') ) {
-                        get_the_image( array(
-                            'meta_key' => 'Thumbnail',
-                            'size' => 'thumbnail',
-                            'image_class' => 'random_featured_image_image',
-                            'width' => 150,
-                            'height' => 150,
-                            'default_image' => get_template_directory_uri() . '/images/archive-thumbnail-placeholder.gif' ) );
-                        }
-                    }
-
-                    $first = false;
 
                     $this->div_end();
 
@@ -169,8 +175,15 @@ if (function_exists('the_excerpt_reloaded')) { ?>
 	} // function form
 } // widget class
 
-function random_feat_image_from_cat_init() {
+function random_featured_image_init() {
 	register_widget('RandomFeaturedImage');
+    add_image_size( 'rf-sidebar-thumbnail', 250, 280, array('left,right'));
+    add_filter('image_size_names_choose', 'random_featured_image_show_image_sizes');
+}
+
+function random_featured_image_show_image_sizes($sizes) {
+    $sizes['rf-sidebar-thumbnail'] = __( 'Sidebar Thumbnail', 'random_featured_image' );
+    return $sizes;
 }
 
 function random_featured_image_enqueue_scripts() {
@@ -182,12 +195,14 @@ function random_featured_image_enqueue_scripts() {
     wp_enqueue_style( 'random_featured_image_style' );
 }
 
-add_action('widgets_init', 'random_feat_image_from_cat_init');
+add_action('widgets_init', 'random_featured_image_init');
 add_action('wp_enqueue_scripts', 'random_featured_image_enqueue_scripts');
+
 
 
 
 // i18n
 $plugin_dir = basename(dirname(__FILE__)). '/languages';
 load_plugin_textdomain( 'RandomFeaturedImage', 'wp-content/plugins/' . $plugin_dir, $plugin_dir );
+
 ?>
